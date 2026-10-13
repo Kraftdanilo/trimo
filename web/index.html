@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HyperFrames — studio scènes HTML · voix off · MP4</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- ══ Barre supérieure ══ -->
+<header class="topbar">
+  <div class="brand"><span class="logo">H</span><b>HyperFrames</b></div>
+  <div class="tb-mid">
+    <select id="projectSelect" title="Projet"></select>
+    <button class="btn icon" id="btnNewProject" title="Nouveau projet">＋</button>
+    <button class="btn icon danger" id="btnDeleteProject" title="Supprimer le projet">🗑</button>
+    <input id="projTitle" placeholder="Titre du projet" spellcheck="false">
+  </div>
+  <div class="tb-actions">
+    <button class="btn icon" id="btnUndo" title="Annuler (Ctrl+Z)">↶</button>
+    <button class="btn icon" id="btnRedo" title="Rétablir (Ctrl+Y)">↷</button>
+    <button class="btn icon" id="btnSave" title="Sauvegarder (Ctrl+S)">💾</button>
+    <button class="btn primary" id="btnRender" title="Rendre la vidéo (Ctrl+Entrée)">🎬 Exporter MP4</button>
+  </div>
+</header>
+
+<!-- ══ Espace de travail : bibliothèque · viewport · inspecteur ══ -->
+<div class="studio">
+
+  <aside class="left">
+    <div class="left-tabs">
+      <button data-lt="scenes" class="on">🎞 Scènes</button>
+      <button data-lt="assets">🖼 Assets</button>
+    </div>
+
+    <div id="leftScenes" class="left-body">
+      <details class="ai-idea">
+        <summary>🤖 Générer un script IA</summary>
+        <textarea id="aiIdea" rows="3" placeholder="Décris ton idée : « 6 scènes pour un café de spécialité, esprit rétro… »"></textarea>
+        <div class="row">
+          <label>Nb scènes <input type="number" id="aiNScenes" min="1" max="24" value="6" class="short"></label>
+          <button class="btn primary" id="btnGenScript">Générer</button>
+          <button class="btn" id="btnRegenScript" title="Régénère tout (les scènes verrouillées sont conservées)">↻</button>
+        </div>
+      </details>
+      <div id="sceneList"></div>
+      <div class="row" style="margin:0">
+        <button class="btn add-scene" id="btnAddScene" style="flex:1">＋ Ajouter une scène</button>
+        <button class="btn" id="btnGenAllCode" title="Génère le code IA des scènes qui n'en ont pas (utilise la directive de l'inspecteur)">🤖 Code manquant</button>
+      </div>
+    </div>
+
+    <div id="leftAssets" class="left-body" hidden>
+      <div class="row">
+        <label class="filebtn btn">📤 Uploader un asset<input type="file" id="assetUpload" hidden></label>
+      </div>
+      <p class="hint">Insère dans une scène avec <code>{{asset:nom.png}}</code></p>
+      <div id="assetList"></div>
+    </div>
+  </aside>
+
+  <section class="center" id="panelOverview">
+    <div class="ov-layout">
+      <div class="vp-wrap" id="vpWrap">
+        <div class="vp-stage" id="vpStage">
+          <div class="vp-frame" id="ovFrame">
+            <iframe id="ovViewport" title="Aperçu de la scène"></iframe>
+          </div>
+        </div>
+        <div class="transport">
+          <button class="btn icon" id="ovPrev" title="Scène précédente (←)">⏮</button>
+          <button class="btn icon play" id="ovPlay" title="Lecture (Espace)">▶</button>
+          <button class="btn icon" id="ovNext" title="Scène suivante (→)">⏭</button>
+          <button class="btn icon" id="btnLoop" title="Boucle">🔁</button>
+          <span id="ovTime" class="mono tc">0:00.0 / 0:00.0</span>
+          <span class="spacer"></span>
+          <span id="pvStats" class="chips"></span>
+          <span class="spacer"></span>
+          <span id="ovInfo" class="mono dim"></span>
+          <button class="btn icon" id="btnFs" title="Plein écran">⛶</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="inspector">
+    <div class="insp-tabs">
+      <button data-insp="scene" class="on">Scène</button>
+      <button data-insp="code">Code</button>
+      <button data-insp="project">Projet</button>
+      <button data-insp="voice">Voix</button>
+      <button data-insp="versions">Versions</button>
+      <button data-insp="ai">IA</button>
+    </div>
+    <div class="insp-body">
+
+      <section id="inspScene" class="insp-sec on">
+        <h3 class="sec-title">Scène <b id="insNum">—</b></h3>
+        <label>Texte (voix off)
+          <textarea id="insText" rows="3" spellcheck="false"></textarea></label>
+        <label>Prompt visuel
+          <input id="insPrompt" spellcheck="false"></label>
+        <div class="row">
+          <label>Durée (s) <input type="number" id="insDur" step="0.5" min="1" max="30" class="short"></label>
+          <button class="btn" id="insLock">🔒 Verrouiller</button>
+        </div>
+        <div class="row wrap">
+          <button class="btn" id="insRegenText">↻ Texte IA</button>
+          <button class="btn" id="insRegenCode">↻ Code IA</button>
+          <button class="btn" id="insRegenBoth">↻ Scène entière</button>
+        </div>
+        <label>Directive IA — motion design
+          <textarea id="insDirective" rows="2" placeholder="ex : typographie cinétique mot à mot, easing expo, particules…"></textarea></label>
+        <div class="chips" id="insPresets"></div>
+        <h4 class="sec-title">Voix de la scène</h4>
+        <div class="row wrap">
+          <button class="btn primary" id="insTts">🎙 Générer la voix</button>
+          <label class="filebtn btn">📤 Upload audio<input type="file" id="voiceUpload" accept=".mp3,.wav,.ogg" hidden></label>
+          <button class="btn" id="insPlay">▶ écouter</button>
+          <button class="btn" id="insSilence">🔇 silence</button>
+        </div>
+        <div id="insAudioInfo" class="hint"></div>
+      </section>
+
+      <section id="inspCode" class="insp-sec">
+        <div class="code-head">
+          <span>Scène <b id="codeSceneNum">1</b></span>
+          <div class="row" style="margin:0">
+            <button class="btn" id="btnCodeValidate" title="Sauvegarder + valider">✓ Valider</button>
+            <button class="btn" id="btnCodePreview">▶ Aperçu</button>
+            <button class="btn primary" id="btnCodeSave">💾 Sauver</button>
+          </div>
+        </div>
+        <div class="code-tabs">
+          <button data-lang="html" class="on">HTML</button>
+          <button data-lang="css">CSS</button>
+          <button data-lang="js">JS</button>
+        </div>
+        <textarea id="codeEditor" spellcheck="false" class="mono"></textarea>
+        <div id="codeMsg" class="msg"></div>
+        <div class="cp-wrap" id="cpWrap"><iframe id="codePreview" sandbox="allow-scripts" title="aperçu scène"></iframe></div>
+        <div id="previewInfo" class="hint"></div>
+        <div class="row wrap">
+          <button class="btn" id="btnCodeReset" title="Snapshot puis restaure via l'onglet Versions">↺ Version IA</button>
+          <button class="btn" id="btnCodeAI">🤖 Régénérer le code</button>
+        </div>
+      </section>
+
+      <section id="inspProject" class="insp-sec">
+        <h3 class="sec-title">Projet</h3>
+        <label>Description
+          <textarea id="projDesc" rows="2" spellcheck="false"></textarea></label>
+        <h4 class="sec-title">Style global</h4>
+        <div class="grid2">
+          <label>Couleur primaire <input type="color" id="stPrimary"></label>
+          <label>Couleur secondaire <input type="color" id="stSecondary"></label>
+          <label>Fond <input type="color" id="stBackground"></label>
+          <label>Police (Google Fonts) <input type="text" id="stFont" class="mono"></label>
+          <label>Format
+            <select id="stAspect">
+              <option value="16:9">16:9</option><option value="9:16">9:16</option>
+              <option value="1:1">1:1</option><option value="4:5">4:5</option>
+            </select>
+          </label>
+          <label>Résolution
+            <select id="stRes">
+              <option value="720">720p</option><option value="1080">1080p</option>
+              <option value="1440">1440p</option><option value="2160">4K</option>
+            </select>
+          </label>
+          <label>FPS
+            <select id="stFps"><option>24</option><option selected>30</option><option>60</option></select>
+          </label>
+        </div>
+        <button class="btn primary" id="btnStyleSave">💾 Appliquer le style</button>
+        <p class="hint">Injecté en variables CSS (<code>--hf-primary</code>, <code>--hf-bg</code>, <code>--hf-font</code>…) dans chaque scène.</p>
+        <h4 class="sec-title">Sous-titres</h4>
+        <div class="grid2">
+          <label class="check"><input type="checkbox" id="subEnabled"> Activer</label>
+          <label>Taille <input type="number" id="subSize" min="2" max="12" class="short"></label>
+          <label>Position
+            <select id="subPos"><option value="bottom">bas</option><option value="center">centre</option></select>
+          </label>
+          <label>Couleur <input type="color" id="subColor"></label>
+          <label class="check"><input type="checkbox" id="subOutline"> contour</label>
+          <label class="check"><input type="checkbox" id="subBg"> fond</label>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="btnSubSave">💾 Sauver le style</button>
+          <button class="btn" id="btnSubSrt">⤓ Exporter SRT</button>
+        </div>
+        <div id="subList"></div>
+      </section>
+
+      <section id="inspVoice" class="insp-sec">
+        <h3 class="sec-title">Voix off globale</h3>
+        <label>Voix <select id="voiceSelect"></select></label>
+        <div class="grid2">
+          <label>Vitesse <input type="text" id="voiceRate" value="+0%" class="mono"></label>
+          <label>Volume <input type="text" id="voiceVolume" value="+0%" class="mono"></label>
+          <label>Pitch <input type="text" id="voicePitch" value="+0Hz" class="mono"></label>
+        </div>
+        <div class="row">
+          <button class="btn" id="btnVoiceSave">💾 Config voix</button>
+          <button class="btn primary" id="btnTtsAll">🎙 Générer toute la voix off</button>
+          <button class="btn" id="btnTtsScene">🎙 Scène courante</button>
+        </div>
+        <div id="voiceScenes"></div>
+      </section>
+
+      <section id="inspVersions" class="insp-sec">
+        <h3 class="sec-title">Versions</h3>
+        <button class="btn" id="btnSnapshot">📌 Créer une version manuelle</button>
+        <p class="hint">Un snapshot est créé automatiquement avant chaque régénération IA.</p>
+        <div id="versionList"></div>
+      </section>
+
+      <section id="inspAI" class="insp-sec">
+        <h3 class="sec-title">Moteur IA</h3>
+        <label>Fournisseur
+          <select id="cfgProvider">
+            <option value="">— non configuré —</option>
+          </select>
+        </label>
+        <label>URL de base <input id="cfgBase" class="mono"></label>
+        <label>Modèle <input id="cfgModel" class="mono"></label>
+        <label>Clé API <input id="cfgKey" type="password" placeholder="vide = conserver"></label>
+        <label>Température <input type="range" id="cfgTemp" min="0" max="1" step="0.1" value="0.7"></label>
+        <div class="row">
+          <button class="btn" id="btnCfgTest">Tester la connexion</button>
+          <button class="btn primary" id="btnCfgSave">💾 Enregistrer</button>
+        </div>
+        <div id="cfgMsg" class="msg"></div>
+      </section>
+
+    </div>
+  </aside>
+</div>
+
+<!-- ══ Timeline ══ -->
+<footer class="tlbar">
+  <div class="tl-tools">
+    <button class="btn icon" id="tlStart" title="Retour au début">⏮</button>
+    <button class="btn icon play" id="tlPlay" title="Lecture (Espace)">▶</button>
+    <span id="tlTime" class="mono tc">0:00.0 / 0:00.0</span>
+    <span class="spacer"></span>
+    <button class="btn icon" id="tlZoomOut" title="Zoom arrière">－</button>
+    <input type="range" id="tlZoomRange" min="1" max="6" step="0.5" value="1" class="zoomrange" title="Zoom (Ctrl+molette)">
+    <button class="btn icon" id="tlZoomIn" title="Zoom avant">＋</button>
+  </div>
+  <div class="tl-scroll" id="tlScroll">
+    <div class="tl-inner" id="tlInner">
+      <div id="tlRuler"></div>
+      <div id="tlTrack"></div>
+      <div id="tlCursor"></div>
+    </div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+<div id="busy" class="hidden"><div class="spinner"></div><span id="busyTxt">…</span></div>
+<audio id="audioPlayer" class="hidden"></audio>
+<script src="/static/app.js"></script>
+</body>
+</html>

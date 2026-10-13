@@ -1,0 +1,1 @@
+// Animation robuste jusqu'à 3.5s avec easing et staggering optimisés

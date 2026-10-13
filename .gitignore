@@ -1,0 +1,6 @@
+# Secrets et configuration locale
+.env
+ai_config.json
+__pycache__/
+.venv/
+debug_*.png

@@ -1,0 +1,72 @@
+{
+  "title": "decompte_simple",
+  "description": "Un décompte visuel et sonore de 5 à 1 avec une ambiance dynamique.",
+  "language": "fr",
+  "style": {
+    "primary": "#7C5CFF",
+    "secondary": "#0E0E12",
+    "font": "Inter",
+    "background": "#0E0E12",
+    "aspect": "16:9",
+    "resolution": 1080,
+    "fps": 30
+  },
+  "voice": {
+    "name": "",
+    "rate": "+0%",
+    "volume": "+0%",
+    "pitch": "+0Hz"
+  },
+  "subtitle_style": {
+    "enabled": true,
+    "size": 5,
+    "position": "bottom",
+    "color": "#FFFFFF",
+    "outline": true,
+    "background": true
+  },
+  "scenes": [
+    {
+      "text": "Cinq ! Découvrez Skiche.",
+      "visual_prompt": "Un grand chiffre '5' coloré apparaît au centre de l'écran avec un fond sombre et des effets de lumière.",
+      "duration": 3.5,
+      "locked": false
+    },
+    {
+      "text": "Quatre !",
+      "visual_prompt": "Le chiffre '5' disparaît et est remplacé par un '4' encore plus lumineux, avec une animation de pulsation.",
+      "duration": 2.5,
+      "locked": false
+    },
+    {
+      "text": "Trois !",
+      "visual_prompt": "Le '4' laisse place à un '3' avec des particules lumineuses qui tournent autour.",
+      "duration": 2.5,
+      "locked": false
+    },
+    {
+      "text": "Deux !",
+      "visual_prompt": "Le '3' s'efface pour un '2' rougeoyant, avec un fond qui commence à s'illuminer.",
+      "duration": 2.5,
+      "locked": false
+    },
+    {
+      "text": "Un !",
+      "visual_prompt": "Le '2' disparaît, le '1' brille intensément avec une explosion de lumière à l'écran.",
+      "duration": 2.5,
+      "locked": false
+    },
+    {
+      "text": "C'est parti !",
+      "visual_prompt": "L'écran explose en couleurs vives avec des effets de feu d'artifice, puis revient au calme.",
+      "duration": 3,
+      "locked": false
+    },
+    {
+      "text": "GO !",
+      "visual_prompt": "le mot GO en typographie cinetique geante avec des traits de vitesse",
+      "duration": 2.5,
+      "locked": false
+    }
+  ]
+}

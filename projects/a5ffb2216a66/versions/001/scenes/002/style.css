@@ -1,0 +1,7 @@
+*{margin:0;padding:0}
+body{width:1920px;height:1080px;overflow:hidden;background:#0E0E12;
+  display:grid;place-items:center;font-family:'Segoe UI',sans-serif}
+.big{font-size:340px;font-weight:900;color:#FF5470;
+  animation:pop 2.2s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes pop{0%{transform:scale(0) rotate(-8deg);opacity:0}
+  55%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
